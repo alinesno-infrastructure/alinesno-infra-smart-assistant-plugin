@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.alinesno.infra.smart</groupId>
+        <artifactId>alinesno-infra-smart-assistant-plugins-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.alinesno.infra.smart</groupId>
+    <artifactId>demo-plugin</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <plugin.name>测试业务角色</plugin.name>
+        <plugin.desc>用于做示例插件和插件模板配置</plugin.desc>
+        <plugin.author>luoxiaodong</plugin.author>
+    </properties>
+
+    <dependencies>
+
+        <!-- config-agent_start -->
+        <dependency>
+            <groupId>com.alinesno.infra.smart</groupId>
+            <artifactId>alinesno-infra-smart-assistant-role</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alinesno.infra.common</groupId>
+            <artifactId>alinesno-infra-common-config</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- config-agent_end -->
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <PluginName>${plugin.name}</PluginName>
+                            <PluginDesc>${plugin.desc}</PluginDesc>
+                            <PluginAuthor>${plugin.author}</PluginAuthor>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

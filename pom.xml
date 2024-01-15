@@ -24,6 +24,13 @@
     </properties>
 
     <modules>
+
+        <!-- 自定义agent -->
+        <module>kubernetes-operation-agent</module> <!-- K8S运维脚本专家agent -->
+        <module>ansible-operation-agent</module> <!-- Ansible脚本专家agent -->
+        <module>database-design-agent</module> <!-- 数据库设计专家agent -->
+        <module>business-analyst-agent</module> <!-- 需求分析专家agent -->
+
         <!-- 示例工程 -->
         <module>demo-plugin</module>
     </modules>

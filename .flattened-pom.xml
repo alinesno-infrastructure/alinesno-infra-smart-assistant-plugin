@@ -20,6 +20,10 @@
     </license>
   </licenses>
   <modules>
+    <module>kubernetes-operation-agent</module>
+    <module>ansible-operation-agent</module>
+    <module>database-design-agent</module>
+    <module>business-analyst-agent</module>
     <module>demo-plugin</module>
   </modules>
   <properties>
