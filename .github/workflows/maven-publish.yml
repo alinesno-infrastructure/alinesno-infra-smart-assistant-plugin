@@ -143,5 +143,17 @@ jobs:
           echo '</settings>' >> nexus-config.xml
 
       - name: Build and Deploy to Nexus
-        run: mvn clean deploy --settings nexus-config.xml
+        run: mvn clean package --settings nexus-config.xml
 
+      - name: Build and Deploy to Nexus
+        run: |
+          cp plugins.yaml plugins
+
+          export accessKey=${{ secrets.DEV_QINIU_ACCESS_KEY }}
+          export secretKey=${{ secrets.DEV_QINIU_SECRET_KEY }}
+
+          export spaceBucket=${{ secrets.DEV_QINIU_PLUGINS_BUCKET_NAME }}
+          export remoteFolder=plugins
+
+          # fix: 处理cdh上传之前环境变量替换的问题
+          bash upload-qiniu.sh plugins
