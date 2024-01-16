@@ -12,7 +12,7 @@ fi
 accessKey=$accessKey
 secretKey=$secretKey
 spaceBucket=$spaceBucket
-domain=l8i1sx6m
+domain=$domain
 
 localFolder=$1
 remoteFolder=$remoteFolder
@@ -25,7 +25,7 @@ java -jar ./alinenso-upload-qiniu-tools.jar \
     $accessKey \
     $secretKey \
     $spaceBucket \
-    l8i1sx6m \
+    $domain \
     $localFolder \
     $remoteFolder \
     $overrideUpload \
