@@ -3,11 +3,14 @@ package com.alinesno.infra.smart.assistant.plugin.demo;
 import com.alinesno.infra.smart.assistant.im.dto.NoticeDto;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;
 import com.alinesno.infra.smart.assistant.role.context.RoleChainContext;
+import com.alinesno.infra.smart.assistant.role.utils.YamlUtils;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.core.NodeComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,12 +21,15 @@ import java.util.Map;
 public class DemoPluginChainExpert extends PlatformExpert {
 
     private static final String promptId = "0GSheQ31" ;
+    private List<String> resultMap ;
 
     @LiteflowComponent(value = "DemoPlugin_a" , name="插件测试执行节点A")
     public class ACmp extends NodeComponent {
 
         @Override
         public void process() {
+            resultMap = new ArrayList<>() ;
+
             System.out.println("ACmp executed!");
 
             // 获取上下文
@@ -41,6 +47,9 @@ public class DemoPluginChainExpert extends PlatformExpert {
             log.debug("params = {}" , params);
             log.debug("businessId = {}" , businessId);
             log.debug("noticeDto = {}" , noticeDto);
+
+            resultMap.add(businessId) ;
+            resultMap.add(roleContext.getAssistantYamlContent()) ;
 
         }
     }
@@ -61,6 +70,14 @@ public class DemoPluginChainExpert extends PlatformExpert {
         @Override
         public void process() {
             System.out.println("CCmp executed!");
+            RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
+            String businessId = roleContext.getBusinessId() ; // 获取到业务Id
+
+            log.debug("YamlUtils.mergedYamlList(resultMap) = \r\n{}" , YamlUtils.mergedYamlList(resultMap));
+
+            // 将聚合生成的内容保存到内容数据库中
+            saveToBusinessResult(businessId , YamlUtils.mergedYamlList(resultMap)) ;
+
         }
 
     }
