@@ -20,15 +20,40 @@
     </license>
   </licenses>
   <modules>
-    <module>kubernetes-operation-agent</module>
-    <module>ansible-operation-agent</module>
-    <module>database-design-agent</module>
-    <module>business-analyst-agent</module>
-    <module>demo-plugin</module>
+    <module>alinesno-demo-agent</module>
+    <module>alinesno-ansible-operation-agent</module>
+    <module>alinesno-business-analyst-agent</module>
+    <module>alinesno-database-design-agent</module>
+    <module>alinesno-kubernetes-operation-agent</module>
+    <module>alinesno-api-design-agent</module>
+    <module>alinesno-starter-code-generator-agent</module>
   </modules>
   <properties>
     <liteflow.version>2.11.3</liteflow.version>
     <alinesno.infra.version>1.0.0-SNAPSHOT</alinesno.infra.version>
     <revision>1.0.0-SNAPSHOT</revision>
   </properties>
+  <dependencies>
+    <dependency>
+      <groupId>com.alinesno.infra.smart</groupId>
+      <artifactId>alinesno-infra-smart-assistant-role</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.alinesno.infra.common</groupId>
+      <artifactId>alinesno-infra-common-config</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <outputDirectory>${project.build.directory}/../../plugins</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

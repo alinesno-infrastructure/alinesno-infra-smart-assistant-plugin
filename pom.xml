@@ -24,16 +24,52 @@
     </properties>
 
     <modules>
-
-        <!-- 自定义agent -->
-        <module>kubernetes-operation-agent</module> <!-- K8S运维脚本专家agent -->
-        <module>ansible-operation-agent</module> <!-- Ansible脚本专家agent -->
-        <module>database-design-agent</module> <!-- 数据库设计专家agent -->
-        <module>business-analyst-agent</module> <!-- 需求分析专家agent -->
-
         <!-- 示例工程 -->
-        <module>demo-plugin</module>
+        <module>alinesno-demo-agent</module>
+
+        <!-- agent-plugin插件 -->
+        <module>alinesno-ansible-operation-agent</module> <!-- ansible 脚本专家agent -->
+        <module>alinesno-business-analyst-agent</module> <!-- 需求分析专家agent -->
+        <module>alinesno-database-design-agent</module> <!-- 数据库设计专家agent -->
+        <module>alinesno-kubernetes-operation-agent</module> <!-- kubernetes脚本专家agent -->
+        <module>alinesno-api-design-agent</module> <!-- springboot接口编写agent -->
+        <module>alinesno-starter-code-generator-agent</module> <!-- 代码生成器编写agent -->
+
     </modules>
+
+
+    <!-- 公共的agent依赖包 -->
+    <dependencies>
+        <!-- config-agent_start -->
+        <dependency>
+            <groupId>com.alinesno.infra.smart</groupId>
+            <artifactId>alinesno-infra-smart-assistant-role</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alinesno.infra.common</groupId>
+            <artifactId>alinesno-infra-common-config</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- config-agent_end -->
+    </dependencies>
+
+    <!-- 打包指定目录位置 -->
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- 指定打包的jar包输出路径-->
+                    <outputDirectory>
+                        ${project.build.directory}/../../plugins
+                    </outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 
