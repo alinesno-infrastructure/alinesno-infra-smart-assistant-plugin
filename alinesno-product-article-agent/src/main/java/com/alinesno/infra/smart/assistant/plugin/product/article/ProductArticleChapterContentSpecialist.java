@@ -128,10 +128,25 @@ public class ProductArticleChapterContentSpecialist extends PlatformExpert {
             RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
             String businessId = roleContext.getBusinessId() ; // 获取到业务Id
 
-            log.debug("YamlUtils.mergedYamlList(resultMap) = \r\n{}" , YAMLMapper.toYAML(resultMap));
+            StringBuilder content = new StringBuilder() ;
+
+            if(!resultMap.isEmpty()){
+                int size = resultMap.size() ;
+                for(int i = 0 ; i < resultMap.size() ; i ++){
+                    String str = resultMap.get(i) ;
+                    content.append(str) ;
+
+                    if(size > 1 && i < size - 1){
+                        content.append("\r\n");
+                        content.append("\r\n");
+                    }
+                }
+            }
+
+            log.debug("YamlUtils.mergedYamlList(resultMap) = \r\n{}" , content.toString());
 
             // 将聚合生成的内容保存到内容数据库中
-            saveToBusinessResult(businessId , YAMLMapper.toYAML(resultMap)) ;
+            saveToBusinessResult(businessId , content.toString()) ;
         }
     }
 

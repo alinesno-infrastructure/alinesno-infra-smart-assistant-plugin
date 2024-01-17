@@ -22,6 +22,7 @@
   <modules>
     <module>alinesno-demo-agent</module>
     <module>alinesno-office-default-agent</module>
+    <module>alinesno-product-article-agent</module>
     <module>alinesno-ansible-operation-agent</module>
     <module>alinesno-business-analyst-agent</module>
     <module>alinesno-database-design-agent</module>
