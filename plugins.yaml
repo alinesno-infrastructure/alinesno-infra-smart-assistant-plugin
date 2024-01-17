@@ -6,7 +6,7 @@ agents:
     jarName: "alinesno-demo-agent.jar"
 
   - name: "alinesno-office-default-agent"
-    desc: "前期调试的Agent(不再维护,由其它agent维护)"
+    desc: "前期调试的Agent,不再维护,由其它agent维护"
     author: "luoxiaodong"
     jarName: "alinesno-office-default-agent.jar"
 
