@@ -1,4 +1,4 @@
-package com.alinesno.infra.smart.assistant.plugin.office;
+package com.alinesno.infra.smart.assistant.plugin.product.article;
 
 import com.alinesno.infra.smart.assistant.api.adapter.TaskContentDto;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;
@@ -128,12 +128,10 @@ public class ProductArticleChapterContentSpecialist extends PlatformExpert {
             RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
             String businessId = roleContext.getBusinessId() ; // 获取到业务Id
 
-            resultMap.add(0 ,roleContext.getAssistantYamlContent()) ;
-
-            log.debug("YamlUtils.mergedYamlList(resultMap) = \r\n{}" , YamlUtils.mergedYamlList(resultMap));
+            log.debug("YamlUtils.mergedYamlList(resultMap) = \r\n{}" , YAMLMapper.toYAML(resultMap));
 
             // 将聚合生成的内容保存到内容数据库中
-            saveToBusinessResult(businessId , YamlUtils.mergedYamlList(resultMap)) ;
+            saveToBusinessResult(businessId , YAMLMapper.toYAML(resultMap)) ;
         }
     }
 

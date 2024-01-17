@@ -1,4 +1,4 @@
-package com.alinesno.infra.smart.assistant.plugin.office;
+package com.alinesno.infra.smart.assistant.plugin.product.article;
 
 import com.alinesno.infra.smart.assistant.api.adapter.TaskContentDto;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;

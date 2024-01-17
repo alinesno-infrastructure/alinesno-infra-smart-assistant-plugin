@@ -10,6 +10,11 @@ agents:
     author: "luoxiaodong"
     jarName: "alinesno-office-default-agent.jar"
 
+  - name: "alinesno-product-article-agent"
+    desc: "软文编写专家"
+    author: "luoxiaodong"
+    jarName: "alinesno-product-article-agent.jar"
+
   - name: "alinesno-ansible-operation-agent"
     desc: "理Ansible自动化脚本专家"
     author: "luoxiaodong"

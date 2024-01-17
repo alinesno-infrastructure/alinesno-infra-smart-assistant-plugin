@@ -29,6 +29,7 @@
         <module>alinesno-office-default-agent</module> <!-- 前期调试的Agent(不再维护)-->
 
         <!-- agent-plugin插件 -->
+        <module>alinesno-product-article-agent</module> <!-- 软文编写专家 -->
         <module>alinesno-ansible-operation-agent</module> <!-- ansible 脚本专家agent -->
         <module>alinesno-business-analyst-agent</module> <!-- 需求分析专家agent -->
         <module>alinesno-database-design-agent</module> <!-- 数据库设计专家agent -->
