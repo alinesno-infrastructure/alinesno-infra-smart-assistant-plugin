@@ -26,6 +26,7 @@
     <modules>
         <!-- 示例工程 -->
         <module>alinesno-demo-agent</module>
+        <module>alinesno-office-default-agent</module> <!-- 前期调试的Agent(不再维护)-->
 
         <!-- agent-plugin插件 -->
         <module>alinesno-ansible-operation-agent</module> <!-- ansible 脚本专家agent -->

@@ -2,8 +2,13 @@
 agents:
   - name: "alinesno-demo-agent"
     desc: "示例工程"
-    author: "your_author_name"
+    author: "luoxiaodong"
     jarName: "alinesno-demo-agent.jar"
+
+  - name: "alinesno-office-default-agent"
+    desc: "前期调试的Agent(不再维护,由其它agent维护)"
+    author: "luoxiaodong"
+    jarName: "alinesno-office-default-agent.jar"
 
   - name: "alinesno-ansible-operation-agent"
     desc: "理Ansible自动化脚本专家"
