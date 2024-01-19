@@ -16,31 +16,36 @@ agents:
     jarName: "alinesno-product-article-agent.jar"
 
   - name: "alinesno-ansible-operation-agent"
-    desc: "理Ansible自动化脚本专家"
+    desc: "Ansible自动化脚本专家"
     author: "luoxiaodong"
     jarName: "alinesno-ansible-operation-agent.jar"
 
   - name: "alinesno-business-analyst-agent"
-    desc: "需求分析专家"
+    desc: "需求分析专家agent"
     author: "luoxiaodong"
     jarName: "alinesno-business-analyst-agent.jar"
 
   - name: "alinesno-database-design-agent"
-    desc: "数据库设计专家"
+    desc: "数据库设计专家agent"
     author: "luoxiaodong"
     jarName: "alinesno-database-design-agent.jar"
 
   - name: "alinesno-kubernetes-operation-agent"
-    desc: "Kubernetes脚本专家"
+    desc: "kubernetes脚本专家agent"
     author: "luoxiaodong"
     jarName: "alinesno-kubernetes-operation-agent.jar"
 
   - name: "alinesno-api-design-agent"
-    desc: "Spring Boot接口编写专家"
+    desc: "api接口编写agent"
     author: "luoxiaodong"
     jarName: "alinesno-api-design-agent.jar"
 
   - name: "alinesno-starter-code-generator-agent"
-    desc: "代码生成器编写专家"
+    desc: "代码生成器编写agent"
     author: "luoxiaodong"
     jarName: "alinesno-starter-code-generator-agent.jar"
+
+  - name: "alinesno-company-team-agent"
+    desc: "团队成长管理agent"
+    author: "luoxiaodong"
+    jarName: "alinesno-company-team-agent.jar"

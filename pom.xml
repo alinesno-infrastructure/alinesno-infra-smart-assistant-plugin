@@ -24,18 +24,22 @@
     </properties>
 
     <modules>
+        <module>alinesno-agent-common</module> <!-- agent公共包 -->
+        <module>alinesno-agent-pipeline-engine</module> <!-- yaml解析执行引擎，用于pipeline执行(规划中) -->
+
         <!-- 示例工程 -->
         <module>alinesno-demo-agent</module>
         <module>alinesno-office-default-agent</module> <!-- 前期调试的Agent(不再维护)-->
 
         <!-- agent-plugin插件 -->
-        <module>alinesno-product-article-agent</module> <!-- 软文编写专家 -->
-        <module>alinesno-ansible-operation-agent</module> <!-- ansible 脚本专家agent -->
+        <module>alinesno-product-article-agent</module> <!-- 软文编写专家 agent -->
+        <module>alinesno-ansible-operation-agent</module> <!-- ansible脚本专家agent -->
         <module>alinesno-business-analyst-agent</module> <!-- 需求分析专家agent -->
         <module>alinesno-database-design-agent</module> <!-- 数据库设计专家agent -->
         <module>alinesno-kubernetes-operation-agent</module> <!-- kubernetes脚本专家agent -->
-        <module>alinesno-api-design-agent</module> <!-- springboot接口编写agent -->
+        <module>alinesno-api-design-agent</module> <!-- api接口编写agent -->
         <module>alinesno-starter-code-generator-agent</module> <!-- 代码生成器编写agent -->
+        <module>alinesno-company-team-agent</module> <!-- 团队成长管理agent -->
 
     </modules>
 
@@ -54,7 +58,19 @@
             <version>${revision}</version>
         </dependency>
         <!-- config-agent_end -->
+
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 公共包 -->
+            <dependency>
+                <groupId>com.alinesno.infra.smart</groupId>
+                <artifactId>alinesno-agent-common</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <!-- 打包指定目录位置 -->
     <build>

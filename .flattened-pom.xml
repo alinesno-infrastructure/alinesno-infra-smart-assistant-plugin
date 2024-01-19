@@ -20,6 +20,8 @@
     </license>
   </licenses>
   <modules>
+    <module>alinesno-agent-common</module>
+    <module>alinesno-agent-pipeline-engine</module>
     <module>alinesno-demo-agent</module>
     <module>alinesno-office-default-agent</module>
     <module>alinesno-product-article-agent</module>
@@ -29,12 +31,22 @@
     <module>alinesno-kubernetes-operation-agent</module>
     <module>alinesno-api-design-agent</module>
     <module>alinesno-starter-code-generator-agent</module>
+    <module>alinesno-company-team-agent</module>
   </modules>
   <properties>
     <liteflow.version>2.11.3</liteflow.version>
     <alinesno.infra.version>1.0.0-SNAPSHOT</alinesno.infra.version>
     <revision>1.0.0-SNAPSHOT</revision>
   </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.alinesno.infra.smart</groupId>
+        <artifactId>alinesno-agent-common</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>com.alinesno.infra.smart</groupId>
