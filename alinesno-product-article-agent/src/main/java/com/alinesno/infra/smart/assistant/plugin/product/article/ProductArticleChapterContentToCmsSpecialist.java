@@ -69,7 +69,7 @@ public class ProductArticleChapterContentToCmsSpecialist extends PlatformExpert 
     public static class ChapterContentBean {
         private String sub ; // 子章节内容
         private String chapter ; // 章节名称
-        private String content ; // 保存内容
+        private List<String> content ; // 保存内容
     }
 
 }
