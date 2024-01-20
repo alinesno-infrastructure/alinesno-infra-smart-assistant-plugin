@@ -22,7 +22,6 @@
   <modules>
     <module>alinesno-agent-common</module>
     <module>alinesno-agent-pipeline-engine</module>
-    <module>plugin-generator</module>
     <module>alinesno-demo-agent</module>
     <module>alinesno-office-default-agent</module>
     <module>alinesno-product-article-agent</module>

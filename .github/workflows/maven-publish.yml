@@ -142,8 +142,11 @@ jobs:
           echo '  </activeProfiles>' >> nexus-config.xml
           echo '</settings>' >> nexus-config.xml
 
-      - name: Build and Deploy to Nexus
+      - name: Build and package Plugin
         run: mvn clean package --settings nexus-config.xml
+
+      - name: Build and package Generator
+        run: mvn clean package --settings nexus-config.xml -f plugin-generator
 
       - name: Update Plugin YamlInfo
         run: |

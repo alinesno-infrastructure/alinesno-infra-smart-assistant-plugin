@@ -31,7 +31,6 @@
     <modules>
         <module>alinesno-agent-common</module> <!-- agent公共包 -->
         <module>alinesno-agent-pipeline-engine</module> <!-- yaml解析执行引擎，用于pipeline执行(规划中) -->
-        <module>plugin-generator</module> <!-- 插件yaml信息生成 -->
 
         <!-- 示例工程 -->
         <module>alinesno-demo-agent</module>
