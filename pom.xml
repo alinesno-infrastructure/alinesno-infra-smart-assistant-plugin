@@ -19,13 +19,19 @@
         <revision>1.0.0-SNAPSHOT</revision>
         <alinesno.infra.version>${revision}</alinesno.infra.version>
 
+        <!-- 定义构建版本号 -->
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <timestamp>${maven.build.timestamp}</timestamp>
+
         <!-- 定义liteflow版本 -->
         <liteflow.version>2.11.3</liteflow.version>
+
     </properties>
 
     <modules>
         <module>alinesno-agent-common</module> <!-- agent公共包 -->
         <module>alinesno-agent-pipeline-engine</module> <!-- yaml解析执行引擎，用于pipeline执行(规划中) -->
+        <module>plugin-generator</module> <!-- 插件yaml信息生成 -->
 
         <!-- 示例工程 -->
         <module>alinesno-demo-agent</module>
@@ -74,7 +80,7 @@
 
     <!-- 打包指定目录位置 -->
     <build>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}__${timestamp}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -145,6 +145,15 @@ jobs:
       - name: Build and Deploy to Nexus
         run: mvn clean package --settings nexus-config.xml
 
+      - name: Update Plugin YamlInfo
+        run: |
+          cp plugin-generator/target/plugin-generator-jar-with-dependencies.jar .
+          export pluginYamlPath=plugins.yaml
+          export pluginPath=plugins
+
+          bash update-plugin-info.sh
+          cat plugins.yaml
+
       - name: Upload plugins to Qiniu
         run: |
           cp plugins.yaml plugins
@@ -156,7 +165,6 @@ jobs:
           export remoteFolder=plugins
           export domain=${{ secrets.DEV_QINIU_PLUGINS_BUCKET_DOMAIN }}
 
-          # fix: 处理cdh上传之前环境变量替换的问题
           bash upload-qiniu.sh plugins
 
       - name: Reload Assistant Plugin

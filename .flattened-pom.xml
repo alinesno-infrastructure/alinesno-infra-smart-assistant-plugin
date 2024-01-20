@@ -22,6 +22,7 @@
   <modules>
     <module>alinesno-agent-common</module>
     <module>alinesno-agent-pipeline-engine</module>
+    <module>plugin-generator</module>
     <module>alinesno-demo-agent</module>
     <module>alinesno-office-default-agent</module>
     <module>alinesno-product-article-agent</module>
@@ -34,9 +35,11 @@
     <module>alinesno-company-team-agent</module>
   </modules>
   <properties>
+    <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
     <liteflow.version>2.11.3</liteflow.version>
     <alinesno.infra.version>1.0.0-SNAPSHOT</alinesno.infra.version>
     <revision>1.0.0-SNAPSHOT</revision>
+    <timestamp>${maven.build.timestamp}</timestamp>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -60,7 +63,7 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>${project.artifactId}__${timestamp}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
