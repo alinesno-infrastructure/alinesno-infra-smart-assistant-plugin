@@ -1,5 +1,6 @@
 package com.alinesno.infra.smart.assistant.plugin.product.article;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;
 import com.alinesno.infra.smart.assistant.role.context.RoleChainContext;
 import com.alinesno.infra.smart.assistant.role.utils.YAMLMapper;
@@ -69,7 +70,7 @@ public class ProductArticleChapterContentToCmsSpecialist extends PlatformExpert 
     public static class ChapterContentBean {
         private String sub ; // 子章节内容
         private String chapter ; // 章节名称
-        private List<String> content ; // 保存内容
+        private String content ; // 保存内容
     }
 
 }
