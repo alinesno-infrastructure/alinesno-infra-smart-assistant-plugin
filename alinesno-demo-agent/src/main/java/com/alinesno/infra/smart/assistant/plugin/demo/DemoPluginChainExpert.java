@@ -1,6 +1,9 @@
 package com.alinesno.infra.smart.assistant.plugin.demo;
 
+import cn.hutool.core.util.IdUtil;
+import com.alinesno.infra.smart.assistant.api.adapter.TaskContentDto;
 import com.alinesno.infra.smart.assistant.im.dto.NoticeDto;
+import com.alinesno.infra.smart.assistant.plugin.common.annotation.ChainStep;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;
 import com.alinesno.infra.smart.assistant.role.context.RoleChainContext;
 import com.alinesno.infra.smart.assistant.role.utils.YamlUtils;
@@ -26,6 +29,7 @@ public class DemoPluginChainExpert extends PlatformExpert {
     @LiteflowComponent(value = "DemoPlugin_a" , name="插件测试执行节点A")
     public class ACmp extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() {
             resultMap = new ArrayList<>() ;
@@ -57,9 +61,12 @@ public class DemoPluginChainExpert extends PlatformExpert {
     @LiteflowComponent(value = "DemoPlugin_b" , name="插件测试执行节点B")
     public class BCmp extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() {
             System.out.println("BCmp executed!");
+            TaskContentDto taskContentDto =  brainRemoteService.chatContent("1750338340780298240") ;
+            log.debug("TaskContentDto = {}" , taskContentDto);
         }
 
     }
@@ -67,6 +74,7 @@ public class DemoPluginChainExpert extends PlatformExpert {
     @LiteflowComponent(value = "DemoPlugin_c" , name="插件测试执行节点C")
     public class CCmp extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() {
             System.out.println("CCmp executed!");

@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+# spring 配置
+spring:
+  application:
+    name: plugin-runner
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: aip@local
+
+alinesno:
+  infra:
+    smart:
+      comment-link:
