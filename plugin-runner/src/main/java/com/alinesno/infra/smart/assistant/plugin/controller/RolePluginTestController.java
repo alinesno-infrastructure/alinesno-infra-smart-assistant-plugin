@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RequestMapping("/api/assistant/role/plugin")
 @RestController
@@ -36,19 +39,28 @@ public class RolePluginTestController {
         MessageQueueEntity messageQueue = new MessageQueueEntity() ;
 
         messageQueue.setBusinessId(bId);  ;
-        messageQueue.setContent("this is plugin test!");
+        messageQueue.setContent("学生管理系统");
         messageQueue.setStatus(MessageStatus.SENT.getValue());
 
+//        LiteFlowChainELBuilder.createChain().setChainId("DemoPluginChain").setEL(
+//                "THEN(DemoPlugin_a,DemoPlugin_b,DemoPlugin_c)"
+//        ).build();
+
         LiteFlowChainELBuilder.createChain().setChainId("DemoPluginChain").setEL(
-                "THEN(DemoPlugin_a,DemoPlugin_b,DemoPlugin_c)"
+                "THEN(BA_STEP_01,BA_STEP_02,BA_STEP_03,BA_STEP_04,BA_STEP_05,BA_STEP_AGG)"
         ).build();
 
         flowExecutor.reloadRule();
 
         RoleChainContext roleContext = new RoleChainContext() ;
         roleContext.setBusinessId(bId) ;
+        Map<String , Object> params = new HashMap<>() ;
 
-        LiteflowResponse response = flowExecutor.execute2Resp("DemoPluginChain" , null , roleContext);
+        params.put("label1" , "学生管理系统") ;
+        params.put("businessId" , IdUtil.getSnowflakeNextIdStr()) ;
+        roleContext.setParams(params);
+
+        LiteflowResponse response = flowExecutor.execute2Resp("DemoPluginChain" , params , roleContext);
         log.debug("response = {}" , response);
 
         return AjaxResult.success() ;

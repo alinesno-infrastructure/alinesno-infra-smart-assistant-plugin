@@ -1,6 +1,7 @@
 package com.alinesno.infra.smart.assistant.plugin.product.article;
 
 import com.alinesno.infra.smart.assistant.api.adapter.TaskContentDto;
+import com.alinesno.infra.smart.assistant.plugin.common.annotation.ChainStep;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;
 import com.alinesno.infra.smart.assistant.role.context.RoleChainContext;
 import com.alinesno.infra.smart.assistant.role.utils.YamlUtils;
@@ -30,6 +31,7 @@ public class ProductArticleChapterSpecialist extends PlatformExpert {
     @LiteflowComponent(value = "PAC_STEP_01", name="生成目录大纲结构")
     public class TeamTrainGenerator extends NodeComponent {
 
+        @ChainStep
         @SneakyThrows
         @Override
         public void process() {
@@ -77,6 +79,7 @@ public class ProductArticleChapterSpecialist extends PlatformExpert {
     @LiteflowComponent(value = "PAC_STEP_02", name="保存目录大纲结构")
     public class TeamTrainParse extends NodeComponent {
 
+        @ChainStep
         @SneakyThrows
         @Override
         public void process() {

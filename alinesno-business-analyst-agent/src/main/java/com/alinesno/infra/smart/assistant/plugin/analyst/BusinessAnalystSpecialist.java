@@ -3,9 +3,12 @@ package com.alinesno.infra.smart.assistant.plugin.analyst;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alinesno.infra.smart.assistant.api.adapter.TaskContentDto;
+import com.alinesno.infra.smart.assistant.plugin.common.annotation.ChainStep;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;
 import com.alinesno.infra.smart.assistant.role.context.RoleChainContext;
 import com.alinesno.infra.smart.assistant.role.utils.ParserUtils;
+import com.alinesno.infra.smart.assistant.role.utils.YAMLMapper;
+import com.alinesno.infra.smart.assistant.role.utils.YamlUtils;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.core.NodeComponent;
 import lombok.Data;
@@ -32,13 +35,19 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
     private static final String STEP_05 = "wbqZCMp8" ;
 
     // 内容容器
-    private static final Map<String, Object> resultMap = new HashMap<>() ;
+    private List<String> resultMap = new ArrayList<>();
+    private List<FunctionBean> functionBeanList = new ArrayList<>() ;
 
     @LiteflowComponent(value = "BA_STEP_01" , name="需求分析_需求文档分析")
     public class BA_STEP_01 extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() throws Exception {
+
+            resultMap = new ArrayList<>() ;
+            functionBeanList = new ArrayList<>() ;
+
             RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
             String businessId = generatorId() ;
 
@@ -58,7 +67,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                     String yamlContent = content.getCodeContent().get(0).getContent() ;
                     log.debug("yamlContent = {}" , yamlContent);
 
-                    resultMap.put(STEP_01 , ParserUtils.convertYamlToJson(yamlContent)) ;
+                    resultMap.add(yamlContent) ;
 
                     break ;
                 }
@@ -75,6 +84,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
     @LiteflowComponent(value = "BA_STEP_02" , name="需求分析_项目介绍分析")
     public class BA_STEP_02 extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() throws Exception {
             RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
@@ -96,7 +106,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                     String yamlContent = content.getCodeContent().get(0).getContent() ;
                     log.debug("yamlContent = {}" , yamlContent);
 
-                    resultMap.put(STEP_02 , ParserUtils.convertYamlToJson(yamlContent)) ;
+                    resultMap.add(yamlContent) ;
 
                     break ;
                 }
@@ -113,6 +123,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
     @LiteflowComponent(value = "BA_STEP_03" , name="需求分析_项目功能分析")
     public class BA_STEP_03 extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() throws Exception {
             RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
@@ -131,10 +142,9 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                 log.debug("promptId = {} , content = {}" , STEP_03 , content);
 
                 if(content.getTaskStatus() == 2){
-                    List<FunctionBean> functionBeanList = parseFunctionModule(content.getCodeContent().get(0).getContent());
-//                    roleContext.setFunctionBeanList(functionBeanList);
+                    functionBeanList = parseFunctionModule(content.getCodeContent().get(0).getContent());
 
-                    resultMap.put(STEP_03 , JSONObject.toJSON(functionBeanList)) ;
+                    resultMap.add(YAMLMapper.toYAML(functionBeanList)) ;
 
                     break ;
                 }
@@ -151,68 +161,69 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
     @LiteflowComponent(value = "BA_STEP_04" , name="需求分析_项目功能细化分析")
     public class BA_STEP_04 extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() throws Exception {
-//            RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
-//            List<FunctionBean> functionBeanList  = roleContext.getFunctionBeanList() ;
-//            List<FunctionBean> functionBeanBusList = new ArrayList<>() ;
-//            List<FunctionBean> functionBeanAssisList = new ArrayList<>() ;
-//
-//            for(FunctionBean functionBean : functionBeanList){
-//
-//                String businessId = generatorId() ;
-//                functionBean.setBusinessId(businessId);
-//
-//                functionBeanBusList.add(functionBean) ;
-//
-//                Map<String , Object> params = this.getRequestData();
-//                params.put("label1" , functionBean.getName()) ;
-//                brainRemoteService.chatTask(params , businessId , STEP_04);
-//            }
-//
-//
-//            // >>>>>>>>>>>>>>>>>>>>>>> 获取结果并解析 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.
-//            int retryCount = 0 ;
-//            while (retryCount <= MAX_RETRY_COUNT) {
-//
-//                Thread.sleep(DEFAULT_SLEEP_TIME * 5L);
-//                boolean isFinish = true ;
-//
-//                // 等待获取内容并解析
-//                for(FunctionBean functionBean : functionBeanBusList){
-//                    TaskContentDto content = brainRemoteService.chatContent(functionBean.getBusinessId());
-//                    log.debug("promptId = {} , content = {}" , STEP_04 , content);
-//
-//                    if(content.getTaskStatus() != 2){
-//                        isFinish = false ;
-//                        break ;
-//                    }else{
-//
-//                        String functionYaml = content.getCodeContent().get(0).getContent();
-//                        functionBean.setAssistantContent(parseFunctionContent(functionYaml)) ;
-//
-//                        functionBeanAssisList.add(functionBean) ;
-//                    }
-//                }
-//
-//                if(isFinish){
-//                    break ;
-//                }
-//
-//                retryCount ++ ;
-//                log.debug("生效获取业务次数:{}" , retryCount);
-//            }
+            RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
+            List<FunctionBean> functionBeanBusList = new ArrayList<>() ;
+            List<FunctionBean> functionBeanAssisList = new ArrayList<>() ;
+
+            for(FunctionBean functionBean : functionBeanList){
+
+                String businessId = generatorId() ;
+                functionBean.setBusinessId(businessId);
+
+                functionBeanBusList.add(functionBean) ;
+
+                Map<String , Object> params = this.getRequestData();
+                params.put("label1" , functionBean.getName()) ;
+                brainRemoteService.chatTask(params , businessId , STEP_04);
+            }
+
+
+            // >>>>>>>>>>>>>>>>>>>>>>> 获取结果并解析 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.
+            int retryCount = 0 ;
+            while (retryCount <= MAX_RETRY_COUNT) {
+
+                Thread.sleep(DEFAULT_SLEEP_TIME * 5L);
+                boolean isFinish = true ;
+
+                // 等待获取内容并解析
+                for(FunctionBean functionBean : functionBeanBusList){
+                    TaskContentDto content = brainRemoteService.chatContent(functionBean.getBusinessId());
+                    log.debug("promptId = {} , content = {}" , STEP_04 , content);
+
+                    if(content.getTaskStatus() != 2){
+                        isFinish = false ;
+                        break ;
+                    }else{
+
+                        String functionYaml = content.getCodeContent().get(0).getContent();
+                        functionBean.setAssistantContent(parseFunctionContent(functionYaml)) ;
+
+                        functionBeanAssisList.add(functionBean) ;
+                    }
+                }
+
+                if(isFinish){
+                    break ;
+                }
+
+                retryCount ++ ;
+                log.debug("生效获取业务次数:{}" , retryCount);
+            }
 
             // >>>>>>>>>>>>>>>>>>>> 输出内容 >>>>>>>>>>>>>>>>>>>>
-//            log.debug("functionBeanAssisList = {}" , JSONObject.toJSONString(functionBeanAssisList));
-//
-//            resultMap.put(STEP_04 , JSONObject.toJSON(functionBeanAssisList)) ;
+            log.debug("functionBeanAssisList = {}" , JSONObject.toJSONString(functionBeanAssisList));
+
+            resultMap.add(YAMLMapper.toYAML(functionBeanAssisList)) ;
         }
     }
 
     @LiteflowComponent(value = "BA_STEP_05" , name="需求分析_项目非功能性")
     public class BA_STEP_05 extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() throws Exception {
             RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
@@ -235,7 +246,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                     String yamlContent = content.getCodeContent().get(0).getContent() ;
                     log.debug("yamlContent = {}" , yamlContent);
 
-                    resultMap.put(STEP_05 , JSONObject.toJSON(yamlContent)) ;
+                    resultMap.add(yamlContent) ;
 
                     break ;
                 }
@@ -252,6 +263,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
     @LiteflowComponent(value = "BA_STEP_AGG" , name="需求分析_聚合成文档")
     public class BA_STEP_AGG extends NodeComponent {
 
+        @ChainStep
         @Override
         public void process() throws Exception {
 
@@ -259,7 +271,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
             String businessId = roleContext.getBusinessId() ; // 获取到业务Id
 
             // 将聚合生成的内容保存到内容数据库中
-            saveToBusinessResult(businessId , JSONObject.toJSONString(resultMap)) ;
+            saveToBusinessResult(businessId , YamlUtils.mergedYamlList(resultMap)) ;
         }
     }
 

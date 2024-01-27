@@ -13,4 +13,12 @@
     <artifactId>alinesno-business-analyst-agent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.alinesno.infra.smart</groupId>
+            <artifactId>alinesno-agent-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 </project>

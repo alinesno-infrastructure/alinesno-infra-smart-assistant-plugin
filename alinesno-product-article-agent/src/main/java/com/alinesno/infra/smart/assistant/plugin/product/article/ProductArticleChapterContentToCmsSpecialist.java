@@ -1,6 +1,7 @@
 package com.alinesno.infra.smart.assistant.plugin.product.article;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alinesno.infra.smart.assistant.plugin.common.annotation.ChainStep;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;
 import com.alinesno.infra.smart.assistant.role.context.RoleChainContext;
 import com.alinesno.infra.smart.assistant.role.utils.YAMLMapper;
@@ -30,6 +31,7 @@ public class ProductArticleChapterContentToCmsSpecialist extends PlatformExpert 
     @LiteflowComponent(value = "PACC_TC_STEP_01", name="角色内容写入CMS系统")
     public class PACC_TC_STEP_01 extends NodeComponent {
 
+        @ChainStep
         @SneakyThrows
         @Override
         public void process() {
@@ -52,6 +54,7 @@ public class ProductArticleChapterContentToCmsSpecialist extends PlatformExpert 
     @LiteflowComponent(value = "PACC_TC_STEP_02", name="解析解决内容服务")
     public class PACC_TC_STEP_02 extends NodeComponent {
 
+        @ChainStep
         @SneakyThrows
         @Override
         public void process() {
