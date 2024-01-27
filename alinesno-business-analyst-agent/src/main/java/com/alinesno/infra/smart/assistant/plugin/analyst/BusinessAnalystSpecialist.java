@@ -76,8 +76,6 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                 log.debug("生效获取业务[{}]次数:{}" , businessId , retryCount);
             }
 
-            roleContext.setBusinessId(businessId);
-            roleContext.setUserContent(params.get("label1").toString());
         }
     }
 
@@ -116,8 +114,6 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                 log.debug("生效获取业务[{}]次数:{}" , businessId , retryCount);
             }
 
-            roleContext.setBusinessId(businessId);
-            roleContext.setUserContent(params.get("label1").toString());
         }
     }
 
@@ -140,7 +136,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                 Thread.sleep(DEFAULT_SLEEP_TIME);
 
                 TaskContentDto content = brainRemoteService.chatContent(businessId);
-                log.debug("promptId = {} , content = {}" , STEP_03 , content);
+                log.debug("-->> promptId = {} , content = {}" , STEP_03 , content.getTaskStatus());
 
                 if(content.getTaskStatus() == 2){
                     String yamlContent = content.getCodeContent().get(0).getContent() ;
