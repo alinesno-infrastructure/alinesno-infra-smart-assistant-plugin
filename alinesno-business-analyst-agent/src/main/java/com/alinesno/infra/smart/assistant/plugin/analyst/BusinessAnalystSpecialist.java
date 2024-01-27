@@ -1,23 +1,20 @@
 package com.alinesno.infra.smart.assistant.plugin.analyst;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.alinesno.infra.smart.assistant.api.adapter.TaskContentDto;
 import com.alinesno.infra.smart.assistant.plugin.common.annotation.ChainStep;
 import com.alinesno.infra.smart.assistant.role.PlatformExpert;
 import com.alinesno.infra.smart.assistant.role.context.RoleChainContext;
-import com.alinesno.infra.smart.assistant.role.utils.ParserUtils;
 import com.alinesno.infra.smart.assistant.role.utils.YAMLMapper;
 import com.alinesno.infra.smart.assistant.role.utils.YamlUtils;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.core.NodeComponent;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +33,7 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
 
     // 内容容器
     private List<String> resultMap = new ArrayList<>();
-    private List<FunctionBean> functionBeanList = new ArrayList<>() ;
+    private FunctionBean functionBean ;
 
     @LiteflowComponent(value = "BA_STEP_01" , name="需求分析_需求文档分析")
     public class BA_STEP_01 extends NodeComponent {
@@ -46,7 +43,6 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
         public void process() throws Exception {
 
             resultMap = new ArrayList<>() ;
-            functionBeanList = new ArrayList<>() ;
 
             RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
             String businessId = generatorId() ;
@@ -65,9 +61,13 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
 
                 if(content.getTaskStatus() == 2){
                     String yamlContent = content.getCodeContent().get(0).getContent() ;
+
+                    log.debug("需求分析获取内容:{}" , yamlContent);
+
+                    DocumentIntroduction documentIntroduction = YAMLMapper.fromYAML(yamlContent , DocumentIntroduction.class) ;
                     log.debug("yamlContent = {}" , yamlContent);
 
-                    resultMap.add(yamlContent) ;
+                    resultMap.add(YAMLMapper.toYAML(documentIntroduction)) ;
 
                     break ;
                 }
@@ -106,7 +106,8 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                     String yamlContent = content.getCodeContent().get(0).getContent() ;
                     log.debug("yamlContent = {}" , yamlContent);
 
-                    resultMap.add(yamlContent) ;
+                    ProjectIntroduction projectIntroduction = YAMLMapper.fromYAML(yamlContent , ProjectIntroduction.class) ;
+                    resultMap.add(YAMLMapper.toYAML(projectIntroduction)) ;
 
                     break ;
                 }
@@ -142,9 +143,13 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                 log.debug("promptId = {} , content = {}" , STEP_03 , content);
 
                 if(content.getTaskStatus() == 2){
-                    functionBeanList = parseFunctionModule(content.getCodeContent().get(0).getContent());
+                    String yamlContent = content.getCodeContent().get(0).getContent() ;
+                    log.debug("yamlContent = {}" , yamlContent);
 
-                    resultMap.add(YAMLMapper.toYAML(functionBeanList)) ;
+                    functionBean = YAMLMapper.fromYAML(yamlContent , FunctionBean.class) ;
+                    log.debug("获取需求分析项目功能:{}" , YAMLMapper.toYAML(functionBean));
+
+                    resultMap.add(YAMLMapper.toYAML(functionBean)) ;
 
                     break ;
                 }
@@ -153,8 +158,6 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
                 log.debug("生效获取业务[{}]次数:{}" , businessId , retryCount);
             }
 
-            roleContext.setBusinessId(businessId);
-            roleContext.setUserContent(params.get("label1").toString());
         }
     }
 
@@ -164,59 +167,78 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
         @ChainStep
         @Override
         public void process() throws Exception {
+
             RoleChainContext roleContext = this.getContextBean(RoleChainContext.class) ;
-            List<FunctionBean> functionBeanBusList = new ArrayList<>() ;
-            List<FunctionBean> functionBeanAssisList = new ArrayList<>() ;
 
-            for(FunctionBean functionBean : functionBeanList){
+            List<String> businessIdList = new ArrayList<>() ;
+            String businessId = roleContext.getBusinessId() ;
 
-                String businessId = generatorId() ;
-                functionBean.setBusinessId(businessId);
+            for(FunctionBean.Function function: functionBean.getFunction()){
+                List<FunctionBean.FunctionModel> chapters = function.getModels() ;
 
-                functionBeanBusList.add(functionBean) ;
+                for(FunctionBean.FunctionModel fun: chapters){
+                    String bId = generatorId() ;
 
-                Map<String , Object> params = this.getRequestData();
-                params.put("label1" , functionBean.getName()) ;
-                brainRemoteService.chatTask(params , businessId , STEP_04);
+                    Map<String , Object> paramsLabel = this.getRequestData();
+                    paramsLabel.put("label1" , fun.getName()+":" + fun.getDesc()) ;
+                    paramsLabel.put("label2" , roleContext.getAssistantYamlContent()) ;
+
+                    brainRemoteService.chatTask(paramsLabel , bId , STEP_04);
+                    log.debug("params = {}" , paramsLabel);
+
+                    if(fun.getSubFunctionModel() != null && !fun.getSubFunctionModel().isEmpty()){
+
+                        for(FunctionBean.SubFunctionModel subFun : fun.getSubFunctionModel()){
+
+                            String subBId = generatorId() ;
+                            Map<String , Object> subParamsLabel = this.getRequestData();
+                            subParamsLabel.put("label1" , subFun.getName()+":" + subFun.getDesc()) ;
+                            subParamsLabel.put("label2" , roleContext.getAssistantYamlContent()) ;
+
+                            brainRemoteService.chatTask(subParamsLabel , subBId , STEP_04);
+                            log.debug("params = {}" , paramsLabel);
+
+                            businessIdList.add(subBId) ;
+                        }
+                    }
+
+                    businessIdList.add(bId) ;
+                }
+
             }
-
 
             // >>>>>>>>>>>>>>>>>>>>>>> 获取结果并解析 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.
             int retryCount = 0 ;
             while (retryCount <= MAX_RETRY_COUNT) {
 
-                Thread.sleep(DEFAULT_SLEEP_TIME * 5L);
+                Thread.sleep(DEFAULT_SLEEP_TIME);
                 boolean isFinish = true ;
 
-                // 等待获取内容并解析
-                for(FunctionBean functionBean : functionBeanBusList){
-                    TaskContentDto content = brainRemoteService.chatContent(functionBean.getBusinessId());
-                    log.debug("promptId = {} , content = {}" , STEP_04 , content);
+                for(String bId : businessIdList){
+                    TaskContentDto content = brainRemoteService.chatContent(bId);
+
+                    log.debug("获取需求业务:{}, 详情:{}" , bId , content);
 
                     if(content.getTaskStatus() != 2){
                         isFinish = false ;
                         break ;
-                    }else{
-
-                        String functionYaml = content.getCodeContent().get(0).getContent();
-                        functionBean.setAssistantContent(parseFunctionContent(functionYaml)) ;
-
-                        functionBeanAssisList.add(functionBean) ;
                     }
                 }
 
                 if(isFinish){
+                    for(String bId : businessIdList) {
+                        TaskContentDto content = brainRemoteService.chatContent(bId);
+                        String yamlContent = content.getCodeContent().get(0).getContent();
+
+
+                        resultMap.add(yamlContent) ;
+                    }
                     break ;
                 }
 
                 retryCount ++ ;
-                log.debug("生效获取业务次数:{}" , retryCount);
+                log.debug("生效获取业务[{}]次数:{}" , businessId , retryCount);
             }
-
-            // >>>>>>>>>>>>>>>>>>>> 输出内容 >>>>>>>>>>>>>>>>>>>>
-            log.debug("functionBeanAssisList = {}" , JSONObject.toJSONString(functionBeanAssisList));
-
-            resultMap.add(YAMLMapper.toYAML(functionBeanAssisList)) ;
         }
     }
 
@@ -275,118 +297,50 @@ public class BusinessAnalystSpecialist extends PlatformExpert {
         }
     }
 
-    /**
-     * 解析出功能列表
-     *
-     * @param functionYaml
-     * @return
-     */
-    public List<FunctionBean> parseFunctionModule(String functionYaml) {
-
-        String jsonStr = ParserUtils.convertYamlToJson(functionYaml) ;
-        JSONObject jsonObject = JSONObject.parseObject(jsonStr) ;
-
-        JSONArray functionalModules =  jsonObject.getJSONObject("requirements_description").getJSONObject("functional_requirements").getJSONArray("functional_modules") ;
-
-        List<FunctionBean> functionBeanList = new ArrayList<>() ;
-
-        for(int i = 0 ; i < functionalModules.size() ;  i ++){
-
-            FunctionBean functionBean = new FunctionBean();
-
-            JSONObject jsonObject1 = functionalModules.getJSONObject(i)  ;
-            String moduleNumber = jsonObject1.getString("module_number") ;
-            System.out.println("moduleNumber = " + moduleNumber);
-
-            functionBean.setName(moduleNumber);
-            functionBean.setLevel("" + (i + 1));
-            functionBeanList.add(functionBean);
-
-            JSONArray primaryFunctions = jsonObject1.getJSONArray("primary_functions") ;
-
-            for(int j = 0 ; j < primaryFunctions.size() ;  j ++){
-                JSONObject jsonObject2 = primaryFunctions.getJSONObject(j)  ;
-                String functionNumber = jsonObject2.getString("function_number") ;
-                System.out.println("--->>> functionNumber = " + functionNumber);
-
-                FunctionBean functionBean2 = new FunctionBean();
-                functionBean2.setName(functionNumber);
-                functionBean2.setLevel((i+1) + "." + (j+1));
-                functionBean2.setParentLevel("" + (i+1));
-                functionBeanList.add(functionBean2);
-
-                JSONArray secondaryFunctions = jsonObject2.getJSONArray("secondary_functions") ;
-
-                if(secondaryFunctions != null && !secondaryFunctions.isEmpty()){
-                    for(int n = 0 ; n < secondaryFunctions.size() ;  n ++){
-                        JSONObject jsonObject3 = secondaryFunctions.getJSONObject(n)  ;
-                        String secondaryFunctionNumber = jsonObject3.getString("secondary_function_number") ;
-                        System.out.println("------>>> secondaryFunctionNumber = " + secondaryFunctionNumber);
-
-                        FunctionBean functionBean3 = new FunctionBean();
-                        functionBean3.setName(secondaryFunctionNumber);
-                        functionBean3.setLevel((i+1) + "." + (j+1) + "." + (n+1));
-                        functionBean3.setParentLevel((i+1) + "." + (j+1) );
-                        functionBeanList.add(functionBean3);
-                    }
-                }
-
-            }
-        }
-
-        System.out.println(JSONObject.toJSONString(functionBeanList));
-
-        return functionBeanList ;
+    // 表示需求文档的介绍部分。
+    @Data
+    public static class DocumentIntroduction {
+        private String purpose; // 文档的目的。
+        private String scope; // 文档的范围，包括文档介绍、项目概述和需求描述。
+        private String audience;  // 文档的目标读者。
+        private String terminology; // 包含在文档中的术语和缩写的解释。
+        private String references; // 文档中相关材料的参考。
     }
 
-    public String parseFunctionContent(String functionYaml) {
-
-        String jsonStr = ParserUtils.convertYamlToJson(functionYaml) ;
-        System.out.println(jsonStr);
-
-        JSONObject jsonObject = JSONObject.parseObject(jsonStr) ;
-
-        return jsonObject.getJSONObject("function").getString("desc") ;
-
+    // 表示需求文档项目介绍部分
+    @Data
+    public static class ProjectIntroduction {
+        private String description; // 产品的名称、任务提出者、开发者、用户群
+        private String background; // 产品的背景，在什么样的背景下产生该产品
+        private String goal; // 产品的目标与愿景，产品要能满足什么样的需求，要达到什么样一个效果
+        private String users; // 产品的操作用户
     }
 
-    /**
-     * 功能列表
-     */
+    // 表示需求文档功能列表部分
     @Data
     public static class FunctionBean {
-        private String businessId ; // 业务标识
-        private String name ;  // 功能名称
-        private String parentLevel ;   // 父类功能层级
-        private String level ;   // 功能层级
-        private String type ; // 功能类型(M-模块|F-功能|A-按钮)
-        private String assistantContent ; // 生成的功能描述
-        private List<FunctionBean> subFunction ; // 子类功能
-        private List<String> itemList ; // 子类列表
-
-        public FunctionBean copy(){
-            FunctionBean b = new FunctionBean() ;
-            BeanUtils.copyProperties(this , b);
-            return b;
-        }
-    }
-
-    @Data
-    static class Requirements {
-        private List<FunctionalRequirement> non_functional_requirements;
+        private List<Function> function;
 
         @Data
-        static class FunctionalRequirement {
-            private List<Requirement> performance_requirements;
-            private List<Requirement> security_requirements;
-            private List<Requirement> software_quality_attributes;
-            private List<Requirement> other_requirements;
+        public static class Function {
+            private String title;
+            private String summary;
+            private List<FunctionModel> models;
         }
 
         @Data
-        static class Requirement {
-            private String code;
-            private String description;
+        public static class FunctionModel{
+            private String name ;
+            private String desc ;
+            private List<SubFunctionModel> subFunctionModel;
+        }
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class SubFunctionModel {
+            private String name;
+            private String desc ;
         }
     }
 
